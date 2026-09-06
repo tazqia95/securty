@@ -26,17 +26,13 @@
         <h2>Kontrol Pos Security</h2>
         
         <div class="form-group">
-            <label>Pilih Regu:</label>
-            <select id="regu">
-                <option value="Regu A">Regu A</option>
-                <option value="Regu B">Regu B</option>
-                <option value="Regu C">Regu C</option>
-            </select>
+            <label>Nama Regu:</label>
+            <input type="text" id="regu" placeholder="Contoh: Regu A" required>
         </div>
 
         <div class="form-group">
             <label>Nama Petugas:</label>
-            <input type="text" id="petugas" placeholder="Contoh: Budi Santoso" required>
+            <input type="text" id="petugas" placeholder="Contoh: Iwan Hasyim" required>
         </div>
 
         <div id="reader"></div>
@@ -80,9 +76,39 @@
             });
         }
 
-        let html5QrcodeScanner = new Html5QrcodeScanner(
-            "reader", { fps: 10, qrbox: {width: 220, height: 220} }, false);
-        html5QrcodeScanner.render(onScanSuccess);
+        // Memulai scanner dengan langsung memilih kamera belakang (environment)
+let html5QrCode = new Html5Qrcode("reader");
+
+Html5Qrcode.getCameras().then(cameras => {
+    if (cameras && cameras.length.length > 0) {
+        // Mencari kamera belakang (biasanya memiliki label 'back', 'rear', atau 'environment')
+        let backCamera = cameras.find(cam => cam.label.toLowerCase().includes('back') || cam.label.toLowerCase().includes('rear') || cam.label.toLowerCase().includes('environment'));
+        
+        // Jika ketemu pakai kamera belakang, jika tidak pakai kamera pertama yang tersedia
+        let selectedCameraId = backCamera ? backCamera.id : cameras[cameras.length - 1].id;
+
+        html5QrCode.start(
+            selectedCameraId, 
+            {
+                fps: 10,
+                qrbox: { width: 250, height: 250 }
+            },
+            qrCodeMessage => {
+                // Berhasil scan, kirim data ke server
+                sendDataToServer(qrCodeMessage);
+            },
+            errorMessage => {
+                // Error scanning (biarkan kosong agar tidak memenuhi console)
+            }
+        ).catch(err => {
+            console.error("Gagal memulai kamera:", err);
+        });
+    } else {
+        alert("Tidak ada kamera yang ditemukan pada perangkat ini.");
+    }
+}).catch(err => {
+    console.error("Kesalahan saat mendeteksi kamera:", err);
+});
     </script>
 </body>
 </html>
