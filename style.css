@@ -1,0 +1,192 @@
+/* =========================================
+   GLOBAL STYLES
+========================================= */
+* {
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* =========================================
+   BACKGROUND RESPONSIF BERDASARKAN PERANGKAT & ORIENTASI
+========================================= */
+
+/* 1. Default untuk Komputer / Laptop */
+body.body-portal, 
+body.body-scanner, 
+body.body-dashboard {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('bg-pc.jpg');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+/* 2. Khusus HP dalam posisi Tegak (Portrait) -> Pakai bg-hp.jpg */
+@media screen and (max-width: 768px) and (orientation: portrait) {
+    body.body-portal, 
+    body.body-scanner, 
+    body.body-dashboard {
+        background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('bg-hp.jpg');
+        background-size: cover;
+        background-position: center center;
+        background-attachment: scroll;
+    }
+}
+
+/* 3. Khusus HP saat diputar Mendatar (Landscape) -> Otomatis pakai bg-pc.jpg */
+@media screen and (max-width: 1024px) and (orientation: landscape) {
+    body.body-portal, 
+    body.body-scanner, 
+    body.body-dashboard {
+        background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('bg-pc.jpg');
+        background-size: cover;
+        background-position: center center;
+        background-attachment: scroll;
+    }
+}
+
+/* Tata letak khusus portal */
+body.body-portal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Tata letak khusus scanner */
+body.body-scanner {
+    padding: 20px;
+    max-width: 500px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Tata letak khusus dashboard */
+body.body-dashboard {
+    padding: 15px;
+}
+
+/* =========================================
+   KOMPONEN KOTAK (PORTAL & SCANNER)
+========================================= */
+.card, .container {
+    background: #a39463 !important;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(204, 174, 174, 0.8);
+    width: 92%;
+    max-width: 450px;
+    margin: 20px auto;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 10;
+}
+
+.card { text-align: center; }
+
+/* =========================================
+   KOMPONEN KHUSUS DASHBOARD (LEBAR & TIDAK TERPOTONG)
+========================================= */
+.container-dashboard {
+    background: #ffffff !important;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    width: 98% !important;       /* Memaksa kotak dashboard memenuhi hampir seluruh layar HP */
+    max-width: 1050px !important; /* Batas lebar maksimal di layar laptop */
+    margin: 15px auto;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 10;
+}
+
+h1, h2 { color: #1a365d !important; margin-top: 0; }
+p { color: #475569 !important; font-size: 14px; }
+
+/* =========================================
+   TOMBOL & ELEMEN LAIN
+========================================= */
+.btn { 
+    display: block; 
+    width: 100%; 
+    padding: 12px; 
+    margin: 10px 0; 
+    text-decoration: none; 
+    color: white; 
+    border-radius: 6px; 
+    font-weight: bold; 
+    font-size: 15px; 
+    text-align: center; 
+    border: none; 
+    cursor: pointer; 
+}
+.btn-petugas { background-color: #2563eb; }
+.btn-petugas:hover { background-color: #1d4ed8; }
+
+.btn-danru { background-color: #059669; }
+.btn-danru:hover { background-color: #047857; }
+
+.btn-back { 
+    display: inline-block; 
+    margin-bottom: 15px; 
+    text-decoration: none; 
+    color: #080808; 
+    font-weight: bold; 
+    background: rgba(248, 248, 248, 0.986); 
+    padding: 6px 12px; 
+    border-radius: 4px; 
+    position: relative; 
+    z-index: 10; 
+}
+.btn-back:hover { background: rgba(0, 0, 0, 0.9); }
+
+.btn-refresh { padding: 10px 18px; background-color: #059669; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
+.btn-refresh:hover { background-color: #047857; }
+
+.btn-logout { padding: 10px 18px; background-color: #dc2626; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
+.btn-logout:hover { background-color: #b91c1c; }
+
+.btn-login { width: 100%; padding: 12px; background-color: #0f172a; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 16px; }
+.btn-login:hover { background-color: #334155; }
+
+/* =========================================
+   FORM & INPUT
+========================================= */
+.form-group { margin-bottom: 15px; text-align: left; }
+.form-group label { display: block; font-weight: bold; margin-bottom: 5px; color: #334155; }
+input, select { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 14px; margin-bottom: 10px; }
+
+/* =========================================
+   SCANNER SPESIFIK
+========================================= */
+#reader { width: 100%; margin-top: 15px; border-radius: 8px; overflow: hidden; border: 2px dashed #cbd5e1 !important; background: #fff; }
+#status { text-align: center; font-weight: bold; margin-top: 15px; color: #ffffff; position: relative; z-index: 10; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); }
+
+/* =========================================
+   DASHBOARD SPESIFIK & TABEL
+========================================= */
+#login-section { max-width: 400px; margin: 50px auto; text-align: center; }
+.error-msg { color: #ef4444; font-size: 14px; display: none; margin-bottom: 10px; font-weight: bold; }
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
+.btn-group { display: flex; gap: 10px; }
+
+.table-responsive { 
+    width: 100%; 
+    overflow-x: auto; 
+    margin-top: 15px; 
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    background: white; 
+    min-width: 600px; 
+}
+th, td { padding: 12px; text-align: left; border-bottom: 1px solid #e2e8f0; font-size: 14px; }
+th { background-color: #1e293b; color: white; }
+tr:nth-child(even) { background-color: #f8fafc; }
+.badge { background-color: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 12px; border: 1px solid #bae6fd; }

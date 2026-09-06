@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Monitoring Danru</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="body-dashboard">
+
+    <a href="index.html" class="btn-back">← Kembali ke Utama</a>
+
+    <div id="login-section" class="container">
+        <h2>🔒 Login Komandan Regu</h2>
+        <p style="color: #64748b; font-size: 14px;">Masukkan password untuk mengakses dashboard</p>
+        <p id="error-msg" class="error-msg">Password Salah!</p>
+        <input type="password" id="password" placeholder="Masukkan Password...">
+        <button class="btn-login" onclick="cekLogin()">Masuk Dashboard</button>
+    </div>
+
+    <div id="dashboard-section" class="container container-dashboard" style="display: none;">
+        <div class="header">
+            <h2>📊 Dashboard Live Patroli SBM</h2>
+            <div class="btn-group">
+                <button class="btn-refresh" onclick="loadData()">🔄 Refresh</button>
+                <button class="btn-logout" onclick="logout()">Keluar</button>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Waktu Control</th>
+                        <th>Regu</th>
+                        <th>Nama Petugas</th>
+                        <th>Pos Area</th>
+                    </tr>
+                </thead>
+                <tbody id="tabel-body">
+                    <tr><td colspan="4" style="text-align:center;">Memuat data...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // --- PENGATURAN PASSWORD & URL ---
+        const PASSWORD_DANRU = "danrusbm2026"; // Silakan ubah password di sini
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbywz4HHzhvDNJ7Daju3V1omAesX8aqUq2mlDrIWy3EyVxiemQGokW8EAxJd-Tw2wDa5yg/exec"; // Masukkan URL dari Google Sheets
+
+        // --- SISTEM LOGIN ---
+        function cekLogin() {
+            let inputPass = document.getElementById("password").value;
+            if(inputPass === PASSWORD_DANRU) {
+                // Simpan status login di memori browser
+                sessionStorage.setItem("statusLoginDanru", "sukses");
+                tampilkanDashboard();
+            } else {
+                // Tampilkan pesan error
+                document.getElementById("error-msg").style.display = "block";
+                document.getElementById("password").value = ""; // Kosongkan input
+            }
+        }
+
+        function logout() {
+            sessionStorage.removeItem("statusLoginDanru");
+            location.reload(); // Refresh halaman akan otomatis kembali ke form login
+        }
+
+        function tampilkanDashboard() {
+            document.getElementById("login-section").style.display = "none";
+            document.getElementById("dashboard-section").style.display = "block";
+            loadData(); // Hanya load data dari Google Sheets SETELAH login berhasil
+        }
+
+        // Cek otomatis saat halaman pertama kali dibuka
+        window.onload = function() {
+            // Jika sebelumnya sudah login dan tab belum ditutup, langsung masuk
+            if(sessionStorage.getItem("statusLoginDanru") === "sukses") {
+                tampilkanDashboard();
+            }
+        };
+
+        // --- SISTEM TARIK DATA DARI GOOGLE SHEETS ---
+        function loadData() {
+            document.getElementById("tabel-body").innerHTML = "<tr><td colspan='4' style='text-align:center;'>Memperbarui data...</td></tr>";
+            
+            fetch(GOOGLE_SCRIPT_URL)
+                .then(response => response.json())
+                .then(data => {
+                    if(data.length === 0) {
+                        document.getElementById("tabel-body").innerHTML = "<tr><td colspan='4' style='text-align:center;'>Belum ada data kontrol.</td></tr>";
+                        return;
+                    }
+
+                    let html = "";
+                    data.reverse().forEach(row => {
+                        html += `<tr>
+                                    <td>${row.waktu}</td>
+                                    <td><span class="badge">${row.regu}</span></td>
+                                    <td><b>${row.petugas}</b></td>
+                                    <td>📍 ${row.pos}</td>
+                                 </tr>`;
+                    });
+                    document.getElementById("tabel-body").innerHTML = html;
+                })
+                .catch(error => {
+                    document.getElementById("tabel-body").innerHTML = "<tr><td colspan='4' style='text-align:center; color:red;'>Gagal mengambil data dari server. Pastikan URL Google Script sudah benar.</td></tr>";
+                });
+        }
+    </script>
+</body>
+</html>
