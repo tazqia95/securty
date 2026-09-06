@@ -23,6 +23,7 @@
             <h2>📊 Dashboard Live Patroli SBM</h2>
             <div class="btn-group">
                 <button class="btn-refresh" onclick="loadData()">🔄 Refresh</button>
+                <button class="btn-download" onclick="downloadCSV()">📥 Unduh Laporan</button>
                 <button class="btn-logout" onclick="logout()">Keluar</button>
             </div>
         </div>
@@ -109,6 +110,44 @@
                     document.getElementById("tabel-body").innerHTML = "<tr><td colspan='4' style='text-align:center; color:red;'>Gagal mengambil data dari server. Pastikan URL Google Script sudah benar.</td></tr>";
                 });
         }
+
+        // Fungsi untuk mendownload data tabel menjadi file CSV (bisa dibuka di Excel)
+        function downloadCSV() {
+            let table = document.querySelector("table");
+            let rows = table.querySelectorAll("tr");
+    
+        // Cek apakah data masih kosong atau baru tulisan "Memuat data..."
+            if (rows.length <= 1 || document.getElementById("tabel-body").innerText.includes("Memuat")) {
+            alert("Belum ada data patroli yang bisa diunduh!");
+            return;
+            }
+
+            let csv = [];
+            for (let i = 0; i < rows.length; i++) {
+            let row = [], cols = rows[i].querySelectorAll("td, th");
+        
+            for (let j = 0; j < cols.length; j++) {
+            // Membersihkan teks dan menghapus koma agar format CSV tidak berantakan
+            let data = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, "").replace(/;/g, ",");
+            row.push('"' + data + '"');
+        }
+        csv.push(row.join(";")); // Menggunakan titik koma (;) agar otomatis rapi saat dibuka di Excel Indonesia
+    }
+
+        // Membuat file virtual dan memicu proses download otomatis
+            let csvFile = new Blob([csv.join("\n")], { type: "text/csv;charset=utf-8;" });
+            let downloadLink = document.createElement("a");
+    
+        // Memberikan nama file otomatis berdasarkan tanggal hari ini
+            let tanggalHariIni = new Date().toISOString().slice(0, 10);
+            downloadLink.download = `Laporan_Patroli_SBM_${tanggalHariIni}.csv`;
+    
+            downloadLink.href = window.URL.createObjectURL(csvFile);
+            downloadLink.style.display = "none";
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+}
     </script>
 </body>
 </html>
